@@ -1,5 +1,5 @@
 {
-  "name": "cpsit/course_qcat_export",
+  "name": "cpsit/course-qcat-export",
   "type": "typo3-cms-extension",
   "description": "Exports records from t3events_course to Open Qcat.",
   "keywords": [
@@ -53,8 +53,8 @@
     }
   },
   "replace": {
-    "t3events_reservation": "self.version",
-    "typo3-ter/t3events_reservation": "self.version"
+    "cpsit/course-qcat-export": "self.version",
+    "typo3-ter/course-qcat-export": "self.version"
   },
   "config": {
     "vendor-dir": ".Build/vendor",
