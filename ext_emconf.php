@@ -29,6 +29,7 @@ $EM_CONF[$_EXTKEY] = array (
 			'typo3' => '6.2.0-7.99.99',
 			'php' => '5.4.0-0.0.0',
 			't3import_export' => '0.7.0-0.0.0',
+			't3events' => '0.29.0-0.0.0'
 		),
 		'conflicts' =>
 		array (
