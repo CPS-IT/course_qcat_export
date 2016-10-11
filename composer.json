@@ -22,19 +22,22 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/CPS-IT/course_qcat_export.git"
+      "url": "https://github.com/dwenzel/t3events.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dwenzel/t3import_export.git"
     }
   ],
   "require": {
     "typo3/cms-core": ">=6.2.0,<8.99.99",
-    "dwenzel/t3events": "^0.29.0",
-    "cpsit/t3import_export": "^0.6.0"
+    "typo3/cms": "^7.6",
+    "dwenzel/t3events": "dev-master"
   },
   "require-dev": {
     "mikey179/vfsStream": "1.4.*@dev",
     "phpunit/phpunit": "~4.8.0",
     "satooshi/php-coveralls": "dev-master",
-    "dwenzel/t3events": "dev-develop",
     "cpsit/t3import_export": "dev-develop"
   },
   "autoload": {
@@ -74,4 +77,3 @@
     }
   }
 }
-
