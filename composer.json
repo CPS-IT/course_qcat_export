@@ -1,0 +1,79 @@
+{
+  "name": "cpsit/course-qcat-export",
+  "type": "typo3-cms-extension",
+  "description": "Exports records from t3events_course to Open Qcat.",
+  "keywords": [
+    "TYPO3",
+    "extension",
+    "events",
+    "course",
+    "qcat",
+    "export"
+  ],
+  "license": [
+    "GPL-2.0+"
+  ],
+  "authors": [
+    {
+      "name": "Dirk Wenzel",
+      "role": "Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/dwenzel/t3events.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/dwenzel/t3import_export.git"
+    }
+  ],
+  "require": {
+    "typo3/cms-core": ">=6.2.0,<8.99.99",
+    "typo3/cms": "^7.6",
+    "dwenzel/t3events": "dev-master"
+  },
+  "require-dev": {
+    "mikey179/vfsStream": "1.4.*@dev",
+    "phpunit/phpunit": "~4.8.0",
+    "satooshi/php-coveralls": "dev-master",
+    "cpsit/t3import_export": "dev-develop"
+  },
+  "autoload": {
+    "psr-4": {
+      "CPSIT\\CourseQcatExport\\": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CPSIT\\CourseQcatExport\\Tests\\": "Tests",
+      "TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/",
+      "TYPO3\\CMS\\Fluid\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/fluid/Tests/"
+    }
+  },
+  "replace": {
+    "cpsit/course-qcat-export": "self.version",
+    "typo3-ter/course-qcat-export": "self.version"
+  },
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "mkdir -p .Build/Web/typo3conf/ext/",
+      "mkdir -p .Build/log/coverage/",
+      "[ -L .Build/Web/typo3conf/ext/course_qcat_export ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/course_qcat_export"
+    ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.0.x-dev"
+    },
+    "typo3/cms": {
+      "cms-package-dir": "{$vendor-dir}/typo3/cms",
+      "web-dir": ".Build/Web"
+    }
+  }
+}
