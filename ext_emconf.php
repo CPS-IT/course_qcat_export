@@ -1,9 +1,9 @@
 <?php
 
 /***************************************************************
- * Extension Manager/Repository config file for ext "t3import_export".
+ * Extension Manager/Repository config file for ext "course_qcat_export".
  *
- * Auto generated 25-05-2016 12:45
+ * Auto generated 14-10-2016 11:38
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -22,22 +22,22 @@ $EM_CONF[$_EXTKEY] = array (
 	'createDirs' => '',
 	'clearCacheOnLoad' => 1,
 	'version' => '0.1.0',
-	'constraints' =>
+	'constraints' => 
 	array (
-		'depends' =>
+		'depends' => 
 		array (
 			'typo3' => '6.2.0-7.99.99',
 			'php' => '5.4.0-0.0.0',
 			't3import_export' => '0.6.2-0.0.0',
-			't3events' => '0.29.0-0.0.0'
+			't3events' => '0.29.0-0.0.0',
 		),
-		'conflicts' =>
+		'conflicts' => 
 		array (
 		),
-		'suggests' =>
+		'suggests' => 
 		array (
 		),
 	),
-	'_md5_values_when_last_written' => '',
+	'_md5_values_when_last_written' => 'a:5:{s:9:"ChangeLog";s:4:"d5db";s:9:"README.md";s:4:"09d9";s:13:"composer.json";s:4:"93ef";s:57:"Classes/Component/PreProcessor/PerformanceToQcatArray.php";s:4:"be1e";s:64:"Tests/Unit/Component/PreProcessor/PerformanceToQcatArrayTest.php";s:4:"de48";}',
 );
 
