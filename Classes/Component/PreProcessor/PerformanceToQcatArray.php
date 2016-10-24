@@ -103,6 +103,10 @@ class PerformanceToQcatArray
 
         $priceAmount = $this->getEntityValueFromPath($performance, 'price', 0.0);
 
+        if (empty($priceAmount)) {
+            $priceAmount = '0.0';
+        }
+
         $price['SERVICE_PRICE'] = [
             'PRICE_AMOUNT' => $priceAmount,
             'PRICE_CURRENCY' => 'EUR'
@@ -179,7 +183,13 @@ class PerformanceToQcatArray
             Anbieterspezifisch 3
              */
 
-        /*$education['EXTENDED_INFO'] = [
+        $education['MIME_INFO'] = [
+            'MIME_ELEMENT' => [
+                'MINE_SOURCE' => 'http://www.offenbach.ihk.de/E'.$education['COURSE_ID']
+            ]
+        ];
+
+        $education['EXTENDED_INFO'] = [
             /**
             0|Keine Zuordnung möglich
             100|Allgemeinbildende Schule/Einrichtung
@@ -194,8 +204,8 @@ class PerformanceToQcatArray
             109|vergleichbare Rehabilitationseinrichtung
             110|med.-berufl. Rehabilitationseinrichtung
              */
-        /*	'INSTITUTION' => [
-                'type' => '_STATIC_105'
+            'INSTITUTION' => [
+                'type' => '0'
             ],
             /**
             0|Auf Anfrage
@@ -207,8 +217,8 @@ class PerformanceToQcatArray
             6|Blockunterricht
             7|Inhouse-/ Firmenseminar
              */
-        /*	'INSTRUCTION_FORM' => [
-                'type' => '_STATIC_0'
+            'INSTRUCTION_FORM' => [
+                'type' => '0'
             ],
             /**
             0|Keine Zuordnung möglich
@@ -224,11 +234,11 @@ class PerformanceToQcatArray
             109|Umschulung
             110|Integrationssprachkurse (BAMF)
              */
-        /*	'EDUCATION_TYPE' => [
-                'type' => '_STATIC_104'
+            'EDUCATION_TYPE' => [
+                'type' => '0'
             ]
 
-        ];*/
+        ];
 
         $education['MODULE_COURSE'] = $this->getQcatModuleCourseFromPerformance($performance, $configuration);
 
@@ -288,13 +298,17 @@ class PerformanceToQcatArray
         $location = [];
 
         // todo map in array
-        $location['ID_DB'] = $this->getEntityValueFromPath($performance, 'eventLocation.uid');
+        //$location['ID_DB'] = $this->getEntityValueFromPath($performance, 'eventLocation.uid');
 
         $location['NAME'] = substr($this->getEntityValueFromPath($performance, 'eventLocation.name'), 0, 30);
         $location['STREET'] = $this->getEntityValueFromPath($performance, 'eventLocation.address');
         $location['ZIP'] = $this->getEntityValueFromPath($performance, 'eventLocation.zip');
         $location['CITY'] = $this->getEntityValueFromPath($performance, 'eventLocation.place');
         $location['COUNTRY'] = $this->getEntityValueFromPath($performance, 'eventLocation.country.shortNameLocal');
+
+        if (empty($location['COUNTRY'])) {
+            $location['COUNTRY'] = 'Deutschland';
+        }
 
         return $location;
     }
