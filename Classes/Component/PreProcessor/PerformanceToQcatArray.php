@@ -183,11 +183,15 @@ class PerformanceToQcatArray
             Anbieterspezifisch 3
              */
 
-        $education['MIME_INFO'] = [
-            'MIME_ELEMENT' => [
-                'MINE_SOURCE' => 'http://www.offenbach.ihk.de/E'.$education['COURSE_ID']
-            ]
-        ];
+        $baseUrlMineSource = $this->getConfigurationValue($configuration, 'BASE_URL', '');
+        if (!empty($baseUrlMineSource)) {
+            $education['MIME_INFO'] = [
+                'MIME_ELEMENT' => [
+                    'MINE_SOURCE' => sprintf($baseUrlMineSource, $education['COURSE_ID'])
+                ]
+            ];
+        }
+
 
         $education['EXTENDED_INFO'] = [
             /**
