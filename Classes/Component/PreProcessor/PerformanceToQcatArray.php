@@ -183,11 +183,11 @@ class PerformanceToQcatArray
             Anbieterspezifisch 3
              */
 
-        $baseUrlMineSource = $this->getConfigurationValue($configuration, 'BASE_URL', '');
-        if (!empty($baseUrlMineSource)) {
+        $baseUrlMimeSource = $this->getConfigurationValue($configuration, 'BASE_URL', '');
+        if (!empty($baseUrlMimeSource)) {
             $education['MIME_INFO'] = [
                 'MIME_ELEMENT' => [
-                    'MINE_SOURCE' => sprintf($baseUrlMineSource, $education['COURSE_ID'])
+                    'MIME_SOURCE' => sprintf($baseUrlMimeSource, $education['COURSE_ID'])
                 ]
             ];
         }
