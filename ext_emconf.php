@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "course_qcat_export".
  *
- * Auto generated 14-10-2016 11:38
+ * Auto generated 03-11-2016 14:58
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -21,7 +21,7 @@ $EM_CONF[$_EXTKEY] = array (
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 1,
-	'version' => '0.1.0',
+	'version' => '0.2.0',
 	'constraints' => 
 	array (
 		'depends' => 
@@ -38,6 +38,6 @@ $EM_CONF[$_EXTKEY] = array (
 		array (
 		),
 	),
-	'_md5_values_when_last_written' => 'a:5:{s:9:"ChangeLog";s:4:"d5db";s:9:"README.md";s:4:"09d9";s:13:"composer.json";s:4:"93ef";s:57:"Classes/Component/PreProcessor/PerformanceToQcatArray.php";s:4:"be1e";s:64:"Tests/Unit/Component/PreProcessor/PerformanceToQcatArrayTest.php";s:4:"de48";}',
+	'_md5_values_when_last_written' => 'a:5:{s:9:"ChangeLog";s:4:"a499";s:9:"README.md";s:4:"09d9";s:13:"composer.json";s:4:"7e77";s:57:"Classes/Component/PreProcessor/PerformanceToQcatArray.php";s:4:"fd56";s:64:"Tests/Unit/Component/PreProcessor/PerformanceToQcatArrayTest.php";s:4:"de48";}',
 );
 

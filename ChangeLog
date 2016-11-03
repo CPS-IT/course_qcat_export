@@ -1,3 +1,8 @@
+2016-11-03         [RELEASE] Release of course_qcat_export 0.2.0 (Dirk Wenzel)
+2016-10-24 9f6a6cf fix typo in mime_source (Benjamin Rannow)
+2016-10-24 231b4e0 remove user specific information, add new config field in ts (Benjamin Rannow)
+2016-10-24 f387dba update Performance mapping - Validation errors (Benjamin Rannow)
+
 2016-10-14         [RELEASE] Release of course_qcat_export 0.1.0 (Dirk Wenzel)
 2016-10-14 b5e8a88 [BUGFIX] required version of t3import_export fixed. (Dirk Wenzel)
 2016-10-11 3a6ab84 [TASK] require t3events dev-master (Dirk Wenzel)
@@ -7,5 +12,3 @@
 2016-10-11 7ed41ed [BUGFIX] required version of t3events_course corrected. (Dirk Wenzel)
 2016-10-11 b901281 [TASK] unit test for pre-processor PerformanceToQcatArray added. Typo in composer.json corrected. (Dirk Wenzel)
 2016-10-11 e0b1571 [TASK] extension configuration added, require t3import_export 0.7.0. Pre-processor PerformanceToQcatArray imported from t3import_export. (Dirk Wenzel)
-
-
