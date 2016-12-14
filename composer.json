@@ -36,10 +36,8 @@
     "cpsit/t3import_export": "^0.7.0"
   },
   "require-dev": {
-    "mikey179/vfsStream": "1.4.*@dev",
     "phpunit/phpunit": "~4.8.0",
-    "satooshi/php-coveralls": "dev-master",
-    "cpsit/t3import_export": "dev-develop"
+    "satooshi/php-coveralls": "dev-master"
   },
   "autoload": {
     "psr-4": {
