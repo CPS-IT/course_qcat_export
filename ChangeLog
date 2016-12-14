@@ -1,3 +1,6 @@
+2016-12-14         [RELEASE] Release of course_qcat_export 0.2.1 (Dirk Wenzel)
+2016-11-30 98bed34 remove strip tags from service details -> DESCRIPTION_LONG (Benjamin Rannow)
+
 2016-11-03         [RELEASE] Release of course_qcat_export 0.2.0 (Dirk Wenzel)
 2016-10-24 9f6a6cf fix typo in mime_source (Benjamin Rannow)
 2016-10-24 231b4e0 remove user specific information, add new config field in ts (Benjamin Rannow)
