@@ -129,7 +129,7 @@ class PerformanceToQcatArray
         $title = $this->getEntityValueFromPath($performance, 'event.headline');
         $serviceDetails['TITLE'] = trim($title);
         $description = $this->getEntityValueFromPath($performance, 'event.description');
-        $description = trim(strip_tags($description));
+        $description = trim($description);
         $serviceDetails['DESCRIPTION_LONG'] = preg_replace('/&#?[a-z0-9]{2,8};/', '', $description);
         $serviceDetails['SUPPLIER_ALT_PID'] = $this->getConfigurationValue($configuration, 'SUPPLIER_ALT_PID', 0);
 
