@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "course_qcat_export".
  *
- * Auto generated 03-11-2016 14:58
+ * Auto generated 14-12-2016 15:59
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -21,14 +21,14 @@ $EM_CONF[$_EXTKEY] = array (
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 1,
-	'version' => '0.2.0',
+	'version' => '0.2.1',
 	'constraints' => 
 	array (
 		'depends' => 
 		array (
 			'typo3' => '6.2.0-7.99.99',
 			'php' => '5.4.0-0.0.0',
-			't3import_export' => '0.6.2-0.0.0',
+			't3import_export' => '0.7.0-0.0.0',
 			't3events' => '0.29.0-0.0.0',
 		),
 		'conflicts' => 
@@ -38,6 +38,6 @@ $EM_CONF[$_EXTKEY] = array (
 		array (
 		),
 	),
-	'_md5_values_when_last_written' => 'a:5:{s:9:"ChangeLog";s:4:"a499";s:9:"README.md";s:4:"09d9";s:13:"composer.json";s:4:"7e77";s:57:"Classes/Component/PreProcessor/PerformanceToQcatArray.php";s:4:"fd56";s:64:"Tests/Unit/Component/PreProcessor/PerformanceToQcatArrayTest.php";s:4:"de48";}',
+	'_md5_values_when_last_written' => 'a:5:{s:9:"ChangeLog";s:4:"2008";s:9:"README.md";s:4:"09d9";s:13:"composer.json";s:4:"7e77";s:57:"Classes/Component/PreProcessor/PerformanceToQcatArray.php";s:4:"2d2f";s:64:"Tests/Unit/Component/PreProcessor/PerformanceToQcatArrayTest.php";s:4:"de48";}',
 );
 
