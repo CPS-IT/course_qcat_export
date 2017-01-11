@@ -21,8 +21,10 @@ namespace CPSIT\CourseQcatExport\Component\PreProcessor;
  ***************************************************************/
 use CPSIT\T3importExport\Component\PreProcessor\AbstractPreProcessor;
 use CPSIT\T3importExport\Component\PreProcessor\PreProcessorInterface;
+use DWenzel\T3events\Domain\Model\Person;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
@@ -141,6 +143,12 @@ class PerformanceToQcatArray
             'START_DATE' => $startDate->format(DATE_W3C),
             'END_DATE' => $endDate->format(DATE_W3C)
         ];
+
+        $dateRemarks  = $this->getEntityValueFromPath($performance, 'date_remarks', '');
+        if (!empty($dateRemarks)) {
+            $serviceDetails['SERVICE_DATE']['DATE_REMARKS'] = substr($dateRemarks, 0, 64000);
+        }
+
         $serviceDetails['KEYWORD'] = GeneralUtility::trimExplode(',',
             $this->getEntityValueFromPath($performance, 'event.keywords'), true);
 
@@ -187,11 +195,15 @@ class PerformanceToQcatArray
         if (!empty($baseUrlMimeSource)) {
             $education['MIME_INFO'] = [
                 'MIME_ELEMENT' => [
-                    'MIME_SOURCE' => sprintf($baseUrlMimeSource, $education['COURSE_ID'])
+                    'MIME_SOURCE' => $baseUrlMimeSource.$education['COURSE_ID']
                 ]
             ];
         }
 
+        $endDate = $this->getEntityValueFromPath($performance, 'endDate', false);
+        if ($endDate) {
+            $education['REGISTRATION_DATE'] = $endDate->format(DATE_W3C);
+        }
 
         $education['EXTENDED_INFO'] = [
             /**
@@ -241,7 +253,6 @@ class PerformanceToQcatArray
             'EDUCATION_TYPE' => [
                 'type' => '0'
             ]
-
         ];
 
         $education['MODULE_COURSE'] = $this->getQcatModuleCourseFromPerformance($performance, $configuration);
@@ -258,9 +269,16 @@ class PerformanceToQcatArray
     {
         $moduleCourse = [];
 
+        $flexEntry = $this->getEntityValueFromPath($performance, 'event.flexible_entry', false);
+        if ($flexEntry) {
+            $moduleCourse['FLEXIBLE_START'] = 'true';
+        }
+
         $moduleCourse['LOCATION'] = $this->getQcatLocationFromPerformance($performance, $configuration);
 
-        /*$moduleCourse['DURATION'] = [
+        $startDate = $this->getEntityValueFromPath($performance, 'date', true);
+        $endDate = $this->getEntityValueFromPath($performance, 'endDate', true);
+        $moduleCourse['DURATION'] = [
             /**
             1|bis 3 Tage
             2|mehr als 3 Tage bis 1 Woche
@@ -273,10 +291,30 @@ class PerformanceToQcatArray
             9|mehr als 3 Jahre
             0|Keine Angabe
              */
-        /*	'type' => '_STACTIC_0',
-            'START_DATE' =>  $performance->getDate()->format(DATE_W3C),
-            'END_DATE' =>  $performance->getEndDate()->format(DATE_W3C)
-        ];*/
+        	'type' => '0'
+        ];
+        if ($startDate) {
+            $moduleCourse['DURATION']['START_DATE'] = $startDate->format(DATE_W3C);
+        }
+        if ($endDate) {
+            $moduleCourse['DURATION']['END_DATE'] = $endDate->format(DATE_W3C);
+        }
+
+        $dateRemarks  = $this->getEntityValueFromPath($performance, 'class_time', '');
+        if (!empty($dateRemarks)) {
+            $moduleCourse['DURATION']['DATE_REMARKS'] = substr($dateRemarks, 0, 64000);
+            $moduleCourse['INSTRUCTION_REMARKS'] = substr($dateRemarks, 0, 64000);
+        }
+
+        $partyLimit = (int)$this->getEntityValueFromPath($performance, 'event.participant_limit', 0);
+        if ($partyLimit > 0) {
+            $moduleCourse['MAX_PARTICIPANTS'] = $partyLimit;
+        }
+
+        $moduleCourse['MIN_PARTICIPANTS'] = 0;
+
+
+
 
         /*$moduleCourse['EXTENDED_INFO'] = [
             'SEGMENT_TYPE' => [
@@ -312,6 +350,17 @@ class PerformanceToQcatArray
 
         if (empty($location['COUNTRY'])) {
             $location['COUNTRY'] = 'Deutschland';
+        }
+
+        /** @var ObjectStorage $contacts */
+        $contacts = $this->getEntityValueFromPath($performance, 'event.contactPersons');
+        if ($contacts && $contacts->count() > 0) {
+            $contacts->rewind();
+            /** @var Person $contact */
+            $contact = $contacts->current();
+            if ($contact && !empty($contact->getEmail())) {
+                $location['EMAILS']['EMAIL'] = $contact->getEmail();
+            }
         }
 
         return $location;
