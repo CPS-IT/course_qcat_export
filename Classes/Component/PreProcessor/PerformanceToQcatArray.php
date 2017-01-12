@@ -311,10 +311,10 @@ class PerformanceToQcatArray
             $moduleCourse['MAX_PARTICIPANTS'] = $partyLimit;
         }
 
-        $moduleCourse['MIN_PARTICIPANTS'] = 0;
-
-
-
+        $partyMinimumRequirement = (int)$this->getEntityValueFromPath($performance, 'event.participant_requirement', 0);
+        if ($partyLimit > 0) {
+            $moduleCourse['MIN_PARTICIPANTS'] = $partyMinimumRequirement;
+        }
 
         /*$moduleCourse['EXTENDED_INFO'] = [
             'SEGMENT_TYPE' => [
