@@ -260,6 +260,11 @@ class PerformanceToQcatArray
             ];
         }
 
+        $credits = $this->getEntityValueFromPath($performance, 'credits', '');
+        if (!empty($credits)) {
+            $education['CREDITS'] = $credits;
+        }
+
         $endDate = $this->getEntityValueFromPath($performance, 'endDate', false);
         if ($endDate) {
             $education['REGISTRATION_DATE'] = $endDate->format(DATE_W3C);
