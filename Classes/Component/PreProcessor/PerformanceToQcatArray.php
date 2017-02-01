@@ -19,6 +19,7 @@ namespace CPSIT\CourseQcatExport\Component\PreProcessor;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use CPSIT\AueEvents\Domain\Model\Classification;
 use CPSIT\AueEvents\Domain\Model\EventLocation;
 use CPSIT\T3importExport\Component\PreProcessor\AbstractPreProcessor;
 use CPSIT\T3importExport\Component\PreProcessor\PreProcessorInterface;
@@ -93,7 +94,38 @@ class PerformanceToQcatArray
         $performanceArray['SERVICE_PRICE_DETAILS'] = $this->getQcatServicePriceFromPerformance($performance,
             $configuration);
 
+        //
+        $performanceArray['SERVICE_CLASSIFICATION'] = $this->getQcatServiceClassificationsPerformance($performance,
+            $configuration);
+
         return $performanceArray;
+    }
+
+    /**
+     * @param $performance
+     * @param $configuration
+     * @return null|array
+     */
+    protected function getQcatServiceClassificationsPerformance($performance, $configuration)
+    {
+
+        $classifications = $this->getEntityValueFromPath($performance, 'event.classifications', []);
+        if (empty($classifications)) {
+            return null;
+        }
+
+        $classification['REFERENCE_CLASSIFICATION_SYSTEM_NAME'] = 'Kurssystematik';
+        $features = [];
+        /** @var Classification $feature */
+        foreach ($classifications as $feature) {
+            $features[] = [
+                'FNAME' => $this->getEntityValueFromPath($feature, 'name', ''),
+                'FVALUE' => $this->getEntityValueFromPath($feature, 'description', '')
+            ];
+        }
+        $classification['FEATURE'] = $features;
+
+        return $classification;
     }
 
     /**
