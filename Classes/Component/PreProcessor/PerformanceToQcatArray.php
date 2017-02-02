@@ -148,7 +148,11 @@ class PerformanceToQcatArray
             'PRICE_CURRENCY' => 'EUR'
         ];
 
-        $price['REMARKS'] = $this->getEntityValueFromPath($performance, 'priceNotice');
+        $notice = $this->getEntityValueFromPath($performance, 'priceNotice');
+        if (!empty($notice)) {
+            $price['REMARKS'] = $notice;
+        }
+
 
         return $price;
     }
@@ -167,7 +171,7 @@ class PerformanceToQcatArray
         $description = $this->getEntityValueFromPath($performance, 'event.description');
         $description = trim($description);
         $serviceDetails['DESCRIPTION_LONG'] = preg_replace('/&#?[a-z0-9]{2,8};/', '', $description);
-        $serviceDetails['SUPPLIER_ALT_PID'] = $this->getConfigurationValue($configuration, 'SUPPLIER_ALT_PID', 0);
+        //$serviceDetails['SUPPLIER_ALT_PID'] = $this->getConfigurationValue($configuration, 'SUPPLIER_ALT_PID', 0);
 
         $sample = new \DateTime();
         $startDate = $this->getEntityValueFromPath($performance, 'date', $sample);
@@ -183,6 +187,11 @@ class PerformanceToQcatArray
             $serviceDetails['SERVICE_DATE']['DATE_REMARKS'] = substr($dateRemarks, 0, 64000);
         }
 
+        $curseContacts = $this->getQcatServiceDetailsContactsFromPerformance($performance, $configuration);
+        if (!empty($curseContacts)) {
+            $serviceDetails['CONTACT'] = $curseContacts;
+        }
+
         $serviceDetails['KEYWORD'] = GeneralUtility::trimExplode(',',
             $this->getEntityValueFromPath($performance, 'event.keywords'), true);
 
@@ -193,13 +202,9 @@ class PerformanceToQcatArray
         $terms = $this->getEntityValueFromPath($performance, 'event.requirements', '');
         if (!empty($terms)) {
             $serviceDetails['TERMS_AND_CONDITIONS'] = $terms;
+        } else {
+            $serviceDetails['TERMS_AND_CONDITIONS'] = '';
         }
-
-        $curseContacts = $this->getQcatServiceDetailsContactsFromPerformance($performance, $configuration);
-        if (!empty($curseContacts)) {
-            $serviceDetails['CONTACT'] = $curseContacts;
-        }
-
 
         $serviceDetails['SERVICE_MODULE'] = $this->getQcatServiceModuleFromPerformance($performance, $configuration);
 
@@ -236,7 +241,7 @@ class PerformanceToQcatArray
 
             $phone = $this->getEntityValueFromPath($contactPerson, 'phone', '');
             if (!empty($phone)) {
-                $contactNode['PHONE'] = $phone;
+                $contactNode['PHONE'] = $this->computePhoneNumber($phone);
             }
             $url = $this->getEntityValueFromPath($contactPerson, 'www', '');
             if (!empty($url)) {
@@ -256,6 +261,37 @@ class PerformanceToQcatArray
         }
 
         return $contactNodes;
+    }
+
+    /**
+     * @param string $number
+     * @return string
+     */
+    protected function computePhoneNumber($number)
+    {
+        $refactoredPhone = $number;
+        if ($refactoredPhone{0} === '+') {
+            $refactoredPhone = substr($refactoredPhone, 1);
+        }
+
+        if ($refactoredPhone{0} === '0' && $refactoredPhone{1} === '0') {
+            $refactoredPhone = substr($refactoredPhone, 2);
+        } elseif ($refactoredPhone{0} === '0') {
+            $refactoredPhone = substr($refactoredPhone, 1);
+        }
+
+        if (substr($refactoredPhone, 0, 2) === '49') {
+            $refactoredPhone = '+' . $refactoredPhone;
+        } else {
+            $refactoredPhone = '+49' . $refactoredPhone;
+        }
+
+        $refactoredPhone = str_replace('+49', '+49.', $refactoredPhone);
+        $refactoredPhone = str_replace('  ', '.', $refactoredPhone);
+        $refactoredPhone = str_replace(' ', '.', $refactoredPhone);
+        $refactoredPhone = str_replace('-', '.', $refactoredPhone);
+
+        return $refactoredPhone;
     }
 
     /**
@@ -393,19 +429,25 @@ class PerformanceToQcatArray
         foreach ($formats as $format) {
             $key = array_search($format->getTitle(), $examMap);
             if (!empty($key)) {
-                $exam['type'] = $key;
-                $exam['DEGREE_TITLE'] = $format->getTitle();
+                $degree['DEGREE_EXAM'] = [
+                    'type' => $format->getTitle(),
+                    'EXAMINER' => 'Keine Angabe'
+                ];
+                $degree['DEGREE_TITLE'] = $format->getTitle();
                 break;
             }
         }
 
+        if (empty($degree['DEGREE_TITLE'])) {
+            $degree['DEGREE_TITLE'] = 'Keine Angabe zur Abschlussbezeichnung';
+        }
+
+
+        $degree['DEGREE_ADD_QUALIFICATION'] = 'Keine Angabe';
+
         /** @var Category $certificate */
         foreach ($certificates as $certificate) {
             $entitled[] = $certificate->getTitle();
-        }
-
-        if (!empty($exam)) {
-            $degree['DEGREE_EXAM'] = $exam;
         }
 
         if (!empty($entitled)) {
