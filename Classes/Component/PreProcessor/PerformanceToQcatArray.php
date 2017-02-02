@@ -116,15 +116,20 @@ class PerformanceToQcatArray
 
         $classification['REFERENCE_CLASSIFICATION_SYSTEM_NAME'] = 'Kurssystematik';
         $features = [];
+        $nothing = true;
         /** @var Classification $feature */
         foreach ($classifications as $feature) {
             $features[] = [
                 'FNAME' => $this->getEntityValueFromPath($feature, 'name', ''),
                 'FVALUE' => $this->getEntityValueFromPath($feature, 'description', '')
             ];
+            $nothing = false;
         }
         $classification['FEATURE'] = $features;
 
+        if ($nothing) {
+            return null;
+        }
         return $classification;
     }
 
