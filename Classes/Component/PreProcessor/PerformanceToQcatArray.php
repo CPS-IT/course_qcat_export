@@ -187,14 +187,14 @@ class PerformanceToQcatArray
             'END_DATE' => $endDate->format(DATE_W3C)
         ];
 
-        $dateRemarks = $this->getEntityValueFromPath($performance, 'dateRemarks', '');
-        if (!empty($dateRemarks)) {
-            $serviceDetails['SERVICE_DATE']['DATE_REMARKS'] = substr($dateRemarks, 0, 64000);
-        }
-
         $curseContacts = $this->getQcatServiceDetailsContactsFromPerformance($performance, $configuration);
         if (!empty($curseContacts)) {
             $serviceDetails['CONTACT'] = $curseContacts;
+        }
+
+        $dateRemarks = $this->getEntityValueFromPath($performance, 'dateRemarks', '');
+        if (!empty($dateRemarks)) {
+            $serviceDetails['SERVICE_DATE']['DATE_REMARKS'] = substr($dateRemarks, 0, 64000);
         }
 
         $serviceDetails['KEYWORD'] = GeneralUtility::trimExplode(',',
