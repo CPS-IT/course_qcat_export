@@ -182,15 +182,15 @@ class PerformanceToQcatArray
         $startDate = $this->getEntityValueFromPath($performance, 'date', $sample);
         $endDate = $this->getEntityValueFromPath($performance, 'endDate', $sample);
 
-        $serviceDetails['SERVICE_DATE'] = [
-            'START_DATE' => $startDate->format(DATE_W3C),
-            'END_DATE' => $endDate->format(DATE_W3C)
-        ];
-
         $curseContacts = $this->getQcatServiceDetailsContactsFromPerformance($performance, $configuration);
         if (!empty($curseContacts)) {
             $serviceDetails['CONTACT'] = $curseContacts;
         }
+
+        $serviceDetails['SERVICE_DATE'] = [
+            'START_DATE' => $startDate->format(DATE_W3C),
+            'END_DATE' => $endDate->format(DATE_W3C)
+        ];
 
         $dateRemarks = $this->getEntityValueFromPath($performance, 'dateRemarks', '');
         if (!empty($dateRemarks)) {
@@ -296,7 +296,14 @@ class PerformanceToQcatArray
         $refactoredPhone = str_replace(' ', '.', $refactoredPhone);
         $refactoredPhone = str_replace('-', '.', $refactoredPhone);
 
-        return $refactoredPhone;
+        $split = explode('.', $refactoredPhone, 3);
+        $lastItem = count($split)-1;
+        if ($lastItem <= 0) {
+            return '';
+        }
+        $split[$lastItem] = str_replace('.', '', $split[$lastItem]);
+
+        return implode('.', $split);
     }
 
     /**
@@ -324,6 +331,26 @@ class PerformanceToQcatArray
             Anbieterspezifisch 3
              */
 
+        $degree = $this->getQcatEducationDegreeFromPerformance($performance, $configuration);
+        if (!empty($degree)) {
+            $education['DEGREE'] = $degree;
+        }
+
+        $credits = $this->getEntityValueFromPath($performance, 'credits', '');
+        if (!empty($credits)) {
+            $education['CREDITS'] = $credits;
+        }
+
+        $subsidies = $this->getQcatEducationSubsidyFromPerformance($performance, $configuration);
+        if (!empty($subsidies)) {
+            $education['SUBSIDY'] = $subsidies;
+        }
+
+        $endDate = $this->getEntityValueFromPath($performance, 'endDate', false);
+        if ($endDate) {
+            $education['REGISTRATION_DATE'] = $endDate->format(DATE_W3C);
+        }
+
         $baseUrlMimeSource = $this->getConfigurationValue($configuration, 'BASE_URL', '');
         if (!empty($baseUrlMimeSource)) {
             $education['MIME_INFO'] = [
@@ -333,14 +360,9 @@ class PerformanceToQcatArray
             ];
         }
 
-        $credits = $this->getEntityValueFromPath($performance, 'credits', '');
-        if (!empty($credits)) {
-            $education['CREDITS'] = $credits;
-        }
-
-        $endDate = $this->getEntityValueFromPath($performance, 'endDate', false);
-        if ($endDate) {
-            $education['REGISTRATION_DATE'] = $endDate->format(DATE_W3C);
+        $certificates = $this->getQcatEducationCertificateFromPerformance($performance, $configuration);
+        if (!empty($certificates)) {
+            $education['CERTIFICATE'] = $certificates;
         }
 
         $education['EXTENDED_INFO'] = [
@@ -395,22 +417,6 @@ class PerformanceToQcatArray
 
         $education['MODULE_COURSE'] = $this->getQcatModuleCourseFromPerformance($performance, $configuration);
 
-        $certificates = $this->getQcatEducationCertificateFromPerformance($performance, $configuration);
-        if (!empty($certificates)) {
-            $education['CERTIFICATE'] = $certificates;
-        }
-
-        $subsidies = $this->getQcatEducationSubsidyFromPerformance($performance, $configuration);
-        if (!empty($subsidies)) {
-            $education['SUBSIDY'] = $subsidies;
-        }
-
-        $degree = $this->getQcatEducationDegreeFromPerformance($performance, $configuration);
-        if (!empty($degree)) {
-            $education['DEGREE'] = $degree;
-        }
-
-
         return ['EDUCATION' => $education];
     }
 
@@ -434,11 +440,11 @@ class PerformanceToQcatArray
         foreach ($formats as $format) {
             $key = array_search($format->getTitle(), $examMap);
             if (!empty($key)) {
+                $degree['DEGREE_TITLE'] = $format->getTitle();
                 $degree['DEGREE_EXAM'] = [
                     'type' => $format->getTitle(),
                     'EXAMINER' => 'Keine Angabe'
                 ];
-                $degree['DEGREE_TITLE'] = $format->getTitle();
                 break;
             }
         }
@@ -514,7 +520,7 @@ class PerformanceToQcatArray
 
         foreach ($certMatrix as $subCertId) {
             if (!empty($subCertId)) {
-                $certificate['CERTIFIER_NUMBER'] = $subCertId;
+                $certificate['CERTIFIER_NUMBER'] = 1234;
                 break;
             }
         }
@@ -565,8 +571,28 @@ class PerformanceToQcatArray
     {
         $moduleCourse = [];
 
-        $flexEntry = $this->getEntityValueFromPath($performance, 'event.flexibleEntry', false);
-        $moduleCourse['FLEXIBLE_START'] = $flexEntry?'true':'false';
+        $partyMinimumRequirement = (int)$this->getEntityValueFromPath($performance, 'event.participantRequirement', 0);
+        if ($partyLimit > 0) {
+            $moduleCourse['MIN_PARTICIPANTS'] = $partyMinimumRequirement;
+        }
+
+        $partyLimit = (int)$this->getEntityValueFromPath($performance, 'event.participantLimit', 0);
+        if ($partyLimit > 0) {
+            $moduleCourse['MAX_PARTICIPANTS'] = $partyLimit;
+        }
+
+
+
+        /*$moduleCourse['EXTENDED_INFO'] = [
+            'SEGMENT_TYPE' => [
+                /**
+                0|Keine Zuordnung
+                1|Blockunterricht
+                2|Praktikum
+                3|Praktikum parallel zu Unterricht
+                4|Prüfung
+                5|Ferien
+                 */
 
         $moduleCourse['LOCATION'] = $this->getQcatLocationFromPerformance($performance, $configuration);
 
@@ -585,7 +611,7 @@ class PerformanceToQcatArray
             9|mehr als 3 Jahre
             0|Keine Angabe
              */
-        	'type' => '0'
+            'type' => '0'
         ];
         if ($startDate) {
             $moduleCourse['DURATION']['START_DATE'] = $startDate->format(DATE_W3C);
@@ -600,26 +626,8 @@ class PerformanceToQcatArray
             $moduleCourse['INSTRUCTION_REMARKS'] = substr($dateRemarks, 0, 64000);
         }
 
-        $partyLimit = (int)$this->getEntityValueFromPath($performance, 'event.participantLimit', 0);
-        if ($partyLimit > 0) {
-            $moduleCourse['MAX_PARTICIPANTS'] = $partyLimit;
-        }
-
-        $partyMinimumRequirement = (int)$this->getEntityValueFromPath($performance, 'event.participantRequirement', 0);
-        if ($partyLimit > 0) {
-            $moduleCourse['MIN_PARTICIPANTS'] = $partyMinimumRequirement;
-        }
-
-        /*$moduleCourse['EXTENDED_INFO'] = [
-            'SEGMENT_TYPE' => [
-                /**
-                0|Keine Zuordnung
-                1|Blockunterricht
-                2|Praktikum
-                3|Praktikum parallel zu Unterricht
-                4|Prüfung
-                5|Ferien
-                 */
+        $flexEntry = $this->getEntityValueFromPath($performance, 'event.flexibleEntry', false);
+        $moduleCourse['FLEXIBLE_START'] = $flexEntry?'true':'false';
 
         return $moduleCourse;
     }
