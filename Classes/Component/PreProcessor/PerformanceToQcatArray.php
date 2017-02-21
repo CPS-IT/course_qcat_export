@@ -20,6 +20,7 @@ namespace CPSIT\CourseQcatExport\Component\PreProcessor;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use CPSIT\AueEvents\Domain\Model\Classification;
+use CPSIT\AueEvents\Domain\Model\Course;
 use CPSIT\AueEvents\Domain\Model\EventLocation;
 use CPSIT\T3importExport\Component\PreProcessor\AbstractPreProcessor;
 use CPSIT\T3importExport\Component\PreProcessor\PreProcessorInterface;
@@ -176,6 +177,9 @@ class PerformanceToQcatArray
         $description = $this->getEntityValueFromPath($performance, 'event.description');
         $description = trim($description);
         $serviceDetails['DESCRIPTION_LONG'] = preg_replace('/&#?[a-z0-9]{2,8};/', '', $description);
+        if (empty($serviceDetails['DESCRIPTION_LONG'])) {
+            $serviceDetails['DESCRIPTION_LONG'] = 'keine Angabe';
+        }
         //$serviceDetails['SUPPLIER_ALT_PID'] = $this->getConfigurationValue($configuration, 'SUPPLIER_ALT_PID', 0);
 
         $sample = new \DateTime();
@@ -509,7 +513,7 @@ class PerformanceToQcatArray
 
         $certificate['CERTIFICATE_STATUS'] = $certStatusValid;
 
-
+        /** @var Course $certMatrix */
         $certMatrix = [
             $event->getCertificateIdNg(),
             $event->getCertificateIdOs(),
@@ -520,7 +524,7 @@ class PerformanceToQcatArray
 
         foreach ($certMatrix as $subCertId) {
             if (!empty($subCertId)) {
-                $certificate['CERTIFIER_NUMBER'] = 1234;
+                $certificate['CERTIFICATE_NUMBER'] = $subCertId;
                 break;
             }
         }
@@ -571,17 +575,15 @@ class PerformanceToQcatArray
     {
         $moduleCourse = [];
 
+        $partyLimit = (int)$this->getEntityValueFromPath($performance, 'event.participantLimit', 0);
         $partyMinimumRequirement = (int)$this->getEntityValueFromPath($performance, 'event.participantRequirement', 0);
         if ($partyLimit > 0) {
             $moduleCourse['MIN_PARTICIPANTS'] = $partyMinimumRequirement;
         }
 
-        $partyLimit = (int)$this->getEntityValueFromPath($performance, 'event.participantLimit', 0);
         if ($partyLimit > 0) {
             $moduleCourse['MAX_PARTICIPANTS'] = $partyLimit;
         }
-
-
 
         /*$moduleCourse['EXTENDED_INFO'] = [
             'SEGMENT_TYPE' => [
