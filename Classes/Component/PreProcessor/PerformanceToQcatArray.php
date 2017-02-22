@@ -502,6 +502,7 @@ class PerformanceToQcatArray
 
         $event = $this->getEntityValueFromPath($performance, 'event');
         $promotions = $this->getEntityValueFromPath($event, 'promotions');
+
         $certStatusValid = 0;
         /** @var Category $promotion */
         foreach ($promotions as $promotion) {
@@ -512,6 +513,9 @@ class PerformanceToQcatArray
         }
 
         $certificate['CERTIFICATE_STATUS'] = $certStatusValid;
+        $certNumber = $this->getEntityValueFromPath($event, 'certifierNumber');
+        $certificate['CERTIFIER_NUMBER'] = $certNumber;
+
 
         /** @var Course $certMatrix */
         $certMatrix = [
@@ -527,6 +531,11 @@ class PerformanceToQcatArray
                 $certificate['CERTIFICATE_NUMBER'] = $subCertId;
                 break;
             }
+        }
+
+
+        if (empty($certificate['CERTIFIER_NUMBER'])) {
+            return [];
         }
 
         return $certificate;
