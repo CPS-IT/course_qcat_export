@@ -90,13 +90,15 @@ class PerformanceToQcatArray
         $performanceArray['SUPPLIER_ID_REF']['content'] = $this->getConfigurationValue($configuration,
             'SUPPLIER_ID_REF', 0);
         $performanceArray['SUPPLIER_ID_REF']['type'] = 'supplier_specific';
+
         $performanceArray['SERVICE_DETAILS'] = $this->getQcatServiceDetailsFromPerformance($performance,
             $configuration);
-        $performanceArray['SERVICE_PRICE_DETAILS'] = $this->getQcatServicePriceFromPerformance($performance,
+
+        $performanceArray['SERVICE_CLASSIFICATION'] = $this->getQcatServiceClassificationsPerformance($performance,
             $configuration);
 
-        //
-        $performanceArray['SERVICE_CLASSIFICATION'] = $this->getQcatServiceClassificationsPerformance($performance,
+
+        $performanceArray['SERVICE_PRICE_DETAILS'] = $this->getQcatServicePriceFromPerformance($performance,
             $configuration);
 
         return $performanceArray;
@@ -119,12 +121,17 @@ class PerformanceToQcatArray
         $features = [];
         $nothing = true;
         /** @var Classification $feature */
+        $limiter = 0;
         foreach ($classifications as $feature) {
+            if ($limiter >= 2) {
+
+            }
             $features[] = [
                 'FNAME' => $this->getEntityValueFromPath($feature, 'name', ''),
                 'FVALUE' => $this->getEntityValueFromPath($feature, 'description', '')
             ];
             $nothing = false;
+            $limiter++;
         }
         $classification['FEATURE'] = $features;
 
