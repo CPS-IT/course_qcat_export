@@ -665,15 +665,16 @@ class PerformanceToQcatArray
         $location['NAME'] = substr($this->getEntityValueFromPath($performance, 'eventLocation.name'), 0, 30);
         $location['STREET'] = $this->getEntityValueFromPath($performance, 'eventLocation.address');
         $location['ZIP'] = $this->getEntityValueFromPath($performance, 'eventLocation.zip');
+
+        $location['BOXNO'] = $this->getEntityValueFromPath($performance, 'eventLocation.postOfficeBox', '');
+        $location['ZIPBOX'] = $this->getEntityValueFromPath($performance, 'eventLocation.postOfficeBoxZip', '');
+
         $location['CITY'] = $this->getEntityValueFromPath($performance, 'eventLocation.place');
         $location['COUNTRY'] = $this->getEntityValueFromPath($performance, 'eventLocation.country.shortNameLocal');
 
         if (empty($location['COUNTRY'])) {
             $location['COUNTRY'] = 'Deutschland';
         }
-
-        $location['BOXNO'] = $this->getEntityValueFromPath($performance, 'eventLocation.postOfficeBox', '');
-        $location['ZIPBOX'] = $this->getEntityValueFromPath($performance, 'eventLocation.postOfficeBoxZip', '');
 
         /** @var ObjectStorage $contacts */
         $contacts = $this->getEntityValueFromPath($performance, 'event.contactPersons');
