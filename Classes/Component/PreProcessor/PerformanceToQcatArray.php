@@ -519,7 +519,7 @@ class PerformanceToQcatArray
             }
         }
 
-        if ($certStatusValid) {
+        if (!empty($certStatusValid)) {
             $certificate['CERTIFICATE_STATUS'] = $certStatusValid;
         }
         $certNumber = $this->getEntityValueFromPath($event, 'certifierNumber');
