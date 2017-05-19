@@ -616,8 +616,8 @@ class PerformanceToQcatArray
 
         $moduleCourse['LOCATION'] = $this->getQcatLocationFromPerformance($performance, $configuration);
 
-        $startDate = $this->getEntityValueFromPath($performance, 'date', true);
-        $endDate = $this->getEntityValueFromPath($performance, 'endDate', true);
+        $startDate = $this->getEntityValueFromPath($performance, 'date', false);
+        $endDate = $this->getEntityValueFromPath($performance, 'endDate', false);
         $moduleCourse['DURATION'] = [
             /**
             1|bis 3 Tage
