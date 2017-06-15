@@ -567,31 +567,18 @@ class PerformanceToQcatArray
      */
     public function getQcatEducationSubsidyFromPerformance($performance, $configuration)
     {
-        $subsidies = [];
+        $subsidy = [];
+        $promotions = $this->getEntityValueFromPath($performance, 'event.promotions');
 
-        $event = $this->getEntityValueFromPath($performance, 'event');
-        $promotions = $this->getEntityValueFromPath($event, 'promotions');
-
-        /** @var Category $promotion */
-        foreach ($promotions as $promotion) {
-            $subsidy = [];
-
-            /*$title = $promotion->getTitle();
-            if (!empty($title)) {
-                $subsidy['SUBSIDY_INSTITUTION'] = $title;
-            }*/
-
-            $desc = $promotion->getDescription();
-            if (!empty($desc)) {
-                $subsidy['SUBSIDY_DESCRIPTION'] = $desc;
+        if ((bool) $promotions) {
+            $titles = [];
+            /** @var Category $promotion */
+            foreach ($promotions as $promotion) {
+                $titles[] = $promotion->getTitle();
             }
-
-            if (!empty($subsidy)) {
-                $subsidies[] = $subsidy;
-            }
+            $subsidy['SUBSIDY_DESCRIPTION'] = implode(',', $titles);
         }
-
-        return $subsidies;
+        return [$subsidy];
     }
 
     /**
