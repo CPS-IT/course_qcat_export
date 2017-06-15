@@ -24,6 +24,7 @@ use CPSIT\AueEvents\Domain\Model\Course;
 use CPSIT\AueEvents\Domain\Model\EventLocation;
 use CPSIT\T3importExport\Component\PreProcessor\AbstractPreProcessor;
 use CPSIT\T3importExport\Component\PreProcessor\PreProcessorInterface;
+use DWenzel\T3events\Domain\Model\Performance;
 use DWenzel\T3events\Domain\Model\Person;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
@@ -42,7 +43,6 @@ class PerformanceToQcatArray
     extends AbstractPreProcessor
     implements PreProcessorInterface
 {
-
     /**
      * Tells whether the configuration is valid
      *
@@ -94,22 +94,20 @@ class PerformanceToQcatArray
         $performanceArray['SERVICE_DETAILS'] = $this->getQcatServiceDetailsFromPerformance($performance,
             $configuration);
 
-        $performanceArray['SERVICE_CLASSIFICATION'] = $this->getQcatServiceClassificationsPerformance($performance,
-            $configuration);
+        $performanceArray['SERVICE_CLASSIFICATION'] = $this->getQcatServiceClassifications($performance);
 
 
-        $performanceArray['SERVICE_PRICE_DETAILS'] = $this->getQcatServicePriceFromPerformance($performance,
-            $configuration);
+        $performanceArray['SERVICE_PRICE_DETAILS'] = $this->getQcatServicePrice($performance);
 
         return $performanceArray;
     }
 
     /**
-     * @param $performance
-     * @param $configuration
-     * @return null|array
+     * @param Performance $performance
+     * @return array|null
+     * @internal param array $configuration
      */
-    protected function getQcatServiceClassificationsPerformance($performance, $configuration)
+    protected function getQcatServiceClassifications($performance)
     {
 
         $classifications = $this->getEntityValueFromPath($performance, 'event.classifications', []);
@@ -143,10 +141,9 @@ class PerformanceToQcatArray
 
     /**
      * @param \DWenzel\T3events\Domain\Model\Performance $performance
-     * @param $configuration
      * @return array
      */
-    protected function getQcatServicePriceFromPerformance($performance, $configuration)
+    protected function getQcatServicePrice($performance)
     {
         $price = [];
 
@@ -193,7 +190,7 @@ class PerformanceToQcatArray
         $startDate = $this->getEntityValueFromPath($performance, 'date', $sample);
         $endDate = $this->getEntityValueFromPath($performance, 'endDate', $sample);
 
-        $curseContacts = $this->getQcatServiceDetailsContactsFromPerformance($performance, $configuration);
+        $curseContacts = $this->getQcatServiceDetailsContacts($performance);
         if (!empty($curseContacts)) {
             $serviceDetails['CONTACT'] = $curseContacts;
         }
@@ -227,7 +224,12 @@ class PerformanceToQcatArray
         return $serviceDetails;
     }
 
-    protected function getQcatServiceDetailsContactsFromPerformance($performance, $configuration)
+    /**
+     * @param Performance $performance
+     * @return array
+     * @internal param array $configuration
+     */
+    protected function getQcatServiceDetailsContacts($performance)
     {
         $contacts = $this->getEntityValueFromPath($performance, 'courseContacts', []);
         $contactNodes = [];
@@ -376,6 +378,8 @@ class PerformanceToQcatArray
             $education['CERTIFICATE'] = $certificates;
         }
 
+        $educationType = $this->getEducationType($performance, $configuration);
+
         $education['EXTENDED_INFO'] = [
             /**
             0|Keine Zuordnung möglich
@@ -422,7 +426,7 @@ class PerformanceToQcatArray
             110|Integrationssprachkurse (BAMF)
              */
             'EDUCATION_TYPE' => [
-                'type' => '0'
+                'type' => $educationType
             ]
         ];
 
@@ -431,12 +435,18 @@ class PerformanceToQcatArray
         return ['EDUCATION' => $education];
     }
 
+    /**
+     * @param Performance $performance
+     * @param array $configuration
+     * @return array
+     */
     public function getQcatEducationDegreeFromPerformance($performance, $configuration)
     {
         $degree = [];
         $exam = [];
         $entitled = [];
 
+        if (isset($configuration['fields']))
         $examMap = [
             101 => 'Berufliche Qualifizierung',
             100 => 'Orientierung & Aktivierung',
@@ -454,7 +464,7 @@ class PerformanceToQcatArray
                 $degree['DEGREE_TITLE'] = $format->getTitle();
                 $degree['DEGREE_EXAM'] = [
                     'type' => $format->getTitle(),
-                    'EXAMINER' => 'Keine Angabe'
+                    'EXAMINER' => $configuration['fields']['EXAMINER']['default'] // todo check
                 ];
                 break;
             }
@@ -557,31 +567,18 @@ class PerformanceToQcatArray
      */
     public function getQcatEducationSubsidyFromPerformance($performance, $configuration)
     {
-        $subsidies = [];
+        $subsidy = [];
+        $promotions = $this->getEntityValueFromPath($performance, 'event.promotions');
 
-        $event = $this->getEntityValueFromPath($performance, 'event');
-        $promotions = $this->getEntityValueFromPath($event, 'promotions');
-
-        /** @var Category $promotion */
-        foreach ($promotions as $promotion) {
-            $subsidy = [];
-
-            /*$title = $promotion->getTitle();
-            if (!empty($title)) {
-                $subsidy['SUBSIDY_INSTITUTION'] = $title;
-            }*/
-
-            $desc = $promotion->getDescription();
-            if (!empty($desc)) {
-                $subsidy['SUBSIDY_DESCRIPTION'] = $desc;
+        if ((bool) $promotions) {
+            $titles = [];
+            /** @var Category $promotion */
+            foreach ($promotions as $promotion) {
+                $titles[] = $promotion->getTitle();
             }
-
-            if (!empty($subsidy)) {
-                $subsidies[] = $subsidy;
-            }
+            $subsidy['SUBSIDY_DESCRIPTION'] = implode(',', $titles);
         }
-
-        return $subsidies;
+        return [$subsidy];
     }
 
     /**
@@ -726,4 +723,40 @@ class PerformanceToQcatArray
         return $default;
     }
 
+    /**
+     * map values
+     * @param int|string $key Initial value, used as key
+     * @param array $map Map fo look up
+     * @param mixed $fallBack Optional value to set if no match in map is found
+     */
+    protected function mapValue($key, $map, $fallBack = null) {
+        if(array_key_exists($key, $map)) {
+            $value = $map[$key];
+        }
+
+        if(!isset($value) && $fallBack !== null) {
+            $value = $fallBack;
+        }
+
+        return $value? $value : null;
+    }
+
+    /**
+     * @param Performance $performance
+     * @param array $configuration
+     * @return int
+     */
+    protected function getEducationType($performance, $configuration)
+    {
+        $defaultEducationType = 0;
+        if (isset($configuration['fields']['EDUCATION_TYPE']['default'])) {
+            $defaultEducationType = (int)$configuration['fields']['EDUCATION_TYPE']['default'];
+        }
+        /** @var int $educationType */
+        $educationType = $this->getEntityValueFromPath($performance, 'event.eventFormats.0.uid', $defaultEducationType);
+        if (isset($configuration['fields']['EDUCATION_TYPE']['map'])) {
+            $educationType = (int)$this->mapValue($educationType, $configuration['fields']['EDUCATION_TYPE']['map'], $defaultEducationType);
+        }
+        return $educationType;
+    }
 }
