@@ -1,3 +1,7 @@
+2017-06-15         [RELEASE] Release of course_qcat_export 0.3.0 (Dirk Wenzel)
+2017-06-15 87a509a [TASK] Pre-processor PerformanceToQcatArray now sets field [SUBSIDY][SUBSIDY_DESCRIPTION] too (Dirk Wenzel)
+2017-06-15 e598570 [TASK] Field EDUCATION_TYPE of new SERVICE entry is now set to the value of a configurable field or fallback value. (Dirk Wenzel)
+
 2017-05-19         [RELEASE] Release of course_qcat_export 0.2.2 (Dirk Wenzel)
 2017-05-19 68b7da4 [BUGFIX] Fix default datetime bug (Benjamin Rannow)
 2017-05-18 5f8275c [TASK] remove CERTIFICATE_STATUS from list if empty (Benjamin Rannow)
