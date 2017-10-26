@@ -520,6 +520,9 @@ class PerformanceToQcatArray
         $event = $this->getEntityValueFromPath($performance, 'event');
         $promotions = $this->getEntityValueFromPath($event, 'promotions');
 
+        if (empty($promotions)) {
+            return $certificate;
+        }
         $certStatusValid = 0;
         /** @var Category $promotion */
         foreach ($promotions as $promotion) {
