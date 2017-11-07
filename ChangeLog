@@ -1,3 +1,10 @@
+2017-11-07         [RELEASE] Release of course_qcat_export 0.3.1 (Dirk Wenzel)
+2017-10-26 ceaf187 [BUGFIX] fixed error in PreProcessor/PerformanceToQcatArray caused by invalid iterator when no promotion is given. (Dirk Wenzel)
+2017-10-12 de0d07f [TASK] require cpsit/t3import_export>=0.7 (Dirk Wenzel)
+2017-10-12 7758ef7 [TASK] obsolete github repositories removed from composer.json (Dirk Wenzel)
+2017-10-12 becc910 [TASK] composer.json: allow legacy TYPO3 version 6.2 too. travis-ci: obsolete coveralls configuration removed. (Dirk Wenzel)
+2017-10-12 82b3377 [TASK] require typo3/cms:^6.2 || ^7.6 (Dirk Wenzel)
+
 2017-06-15         [RELEASE] Release of course_qcat_export 0.3.0 (Dirk Wenzel)
 2017-06-15 87a509a [TASK] Pre-processor PerformanceToQcatArray now sets field [SUBSIDY][SUBSIDY_DESCRIPTION] too (Dirk Wenzel)
 2017-06-15 e598570 [TASK] Field EDUCATION_TYPE of new SERVICE entry is now set to the value of a configurable field or fallback value. (Dirk Wenzel)
