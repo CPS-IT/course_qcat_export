@@ -1,3 +1,6 @@
+2018-02-12         [RELEASE] Release of course_qcat_export 0.3.2 (Dirk Wenzel)
+2018-02-12 844ed57 [BUGFIX] fixed error in PreProcessor/PerformanceToQcatArray where price was read from wrong field (event.examCost instead of price) (Dirk Wenzel)
+
 2017-11-07         [RELEASE] Release of course_qcat_export 0.3.1 (Dirk Wenzel)
 2017-10-26 ceaf187 [BUGFIX] fixed error in PreProcessor/PerformanceToQcatArray caused by invalid iterator when no promotion is given. (Dirk Wenzel)
 2017-10-12 de0d07f [TASK] require cpsit/t3import_export>=0.7 (Dirk Wenzel)
