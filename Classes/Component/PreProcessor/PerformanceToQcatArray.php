@@ -62,7 +62,7 @@ class PerformanceToQcatArray
      * Processes the record
      *
      * @param array $configuration
-     * @param \DWenzel\T3events\Domain\Model\Performance $record
+     * @param \DWenzel\T3events\Domain\Model\Performance|array $record
      * @return bool
      */
     public function process($configuration, &$record)
@@ -147,7 +147,7 @@ class PerformanceToQcatArray
     {
         $price = [];
 
-        $priceAmount = $this->getEntityValueFromPath($performance, 'event.examCosts', 0.0);
+        $priceAmount = $this->getEntityValueFromPath($performance, 'price', 0.0);
 
         if (empty($priceAmount)) {
             $priceAmount = '0.0';
